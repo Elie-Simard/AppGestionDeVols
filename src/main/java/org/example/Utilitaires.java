@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.io.*;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
 
 
 public class Utilitaires {
@@ -49,7 +52,19 @@ public class Utilitaires {
         return reponse.equalsIgnoreCase("O");
     }
     public static void errorMessage(String message) {
-        JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, new JLabel(message) {
+            @Override
+            public void paintComponent(Graphics g) {
+                Image image = null;
+                try {
+                    image = ImageIO.read(getClass().getResource("/space.jpeg"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                g.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
+                super.paintComponent(g);
+            }
+        }, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 
     public static String inputMessage(String message, String titre) {
@@ -159,28 +174,86 @@ public class Utilitaires {
         return retourButton;
     }
 
-    public static void displayVolsPanel(String resultat) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JTextArea textArea = new JTextArea();
+    public static void displayVolsPanel(String resultat) {
+        JDialog dialog = new JDialog(); // Jdialog permet de personnaliser la fenêtre, comparé à JOptionPane
+        dialog.setTitle("Cie Air Relax");
+        dialog.setModal(true); // Pour bloquer les autres fenêtres tant que celle-ci est ouverte
+        dialog.setLayout(new BorderLayout()); // BorderLayout pour l'ajustabilité
+        dialog.setSize(1300, 600);
+        dialog.setLocationRelativeTo(null); // Centrer la fenêtre
+
+        JPanel backgroundPanel = new JPanel() { // Panneau pour le fond d'écran
+            Image image = new ImageIcon(this.getClass().getResource("/space.jpeg")).getImage();
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(image, 0, 0, getWidth(), getHeight(), this); // Ajuste l'image pour qu'elle remplisse le JPanel
+            } //on peint l'image dans le panneau
+        };
+        backgroundPanel.setLayout(new GridBagLayout());
+
+        // Panneau pour le JTextArea -> pour la liste, on doit d'abord créer un panneau pour le texte, un texteArea pour le contenu,
+        // puis un JScrollPane pour le panneau (pour pouvoir scroll) ->
+        JPanel textPanel = new JPanel(new GridBagLayout());
+        textPanel.setOpaque(false); // Rendre le panneau transparent puisque il ne sert qu'à afficher le texte qui lui n'est pas transparent
+
+        // JTextArea pour le contenu
+        JTextArea textArea = new JTextArea(resultat); //on met le resultat dans le JTextArea
         textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         textArea.setEditable(false);
+        textArea.setBackground(Color.BLACK);
+        textArea.setForeground(Color.WHITE);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(returnToMenuButton());
+        // JScrollPane pour la JTextArea
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false); //
 
-        textArea.setText(resultat);
-        panel.add(textArea);
-        panel.add(buttonPanel);
-        JOptionPane.showMessageDialog(null, panel, "AirLine Co", JOptionPane.PLAIN_MESSAGE);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        // Ajouter le JScrollPane au textPanel et le gridBagLayout pour le positionner
+        textPanel.add(scrollPane, gbc);
+
+        // Ajouter le textPanel au backgroundPanel
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.gridx = 0;
+        gbc2.gridy = 0;
+        gbc2.weightx = 1.0;
+        gbc2.weighty = 1.0;
+        gbc2.anchor = GridBagConstraints.CENTER;
+        backgroundPanel.add(textPanel, gbc2);
+
+        // Panneau pour le bouton OK
+        JPanel okButtonPanel = new JPanel();
+        okButtonPanel.setOpaque(false);
+        JButton okButton = new JButton("OK");
+        okButton.addActionListener(e -> {
+            // Fermer la fenêtre
+            SwingUtilities.getWindowAncestor(okButton).dispose();
+
+        });
+        okButtonPanel.add(okButton);
+
+        // Ajouter le okButtonPanel au backgroundPanel
+        GridBagConstraints gbc3 = new GridBagConstraints();
+        gbc3.gridx = 0;
+        gbc3.gridy = 1;
+        gbc3.anchor = GridBagConstraints.CENTER;
+        backgroundPanel.add(okButtonPanel, gbc3);
+
+        dialog.add(backgroundPanel);
+        dialog.setVisible(true);
     }
 
 
-
-
-
-
 }
+
 
 

@@ -621,7 +621,7 @@ public class Compagnie {
                         "Repas (inclus) ",
                         "Choix de siège (inclus) ",
                         "Espaces supplémentaires(extra) ",
-                        "Cagage en soute (extra) "
+                        "Bagage en soute (extra) "
                 };
             case "Charter":
                 return new String[]{
