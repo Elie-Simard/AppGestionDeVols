@@ -1,6 +1,6 @@
 # AppGestionDeVols
 
-[![AppGestionDeVols](https://img.youtube.com/vi/KGJMfQbGMw0/0.jpg)](https://youtu.be/KGJMfQbGMw0)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KGJMfQbGMw0" frameborder="0" allowfullscreen></iframe>
 
 Ce projet est une application java-swing de gestion de vols conçue pour faciliter la planification, le suivi et la modification des vols au sein d'une compagnie aérienne. Développée dans un cadre éducatif, cette application met en évidence ma compréhension d'importants concepts de programmation et de conception logicielle.
 
