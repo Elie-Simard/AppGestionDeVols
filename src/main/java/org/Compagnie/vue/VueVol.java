@@ -1,5 +1,6 @@
 package org.Compagnie.vue;
 
+import org.Compagnie.controller.Controller;
 import org.Compagnie.dao.VolDAO;
 import org.Compagnie.model.*;
 
@@ -164,19 +165,20 @@ public class VueVol {
         String resultat = colonnes;
 
         VolDAO dao = VolDAO.getInstance();
-        ResultSet listeVols = dao.listerVolsSelonType(type);
-        while(listeVols.next()) {
-            resultat += ajouterEspacesFin(10, String.valueOf(listeVols.getInt("vol_id")))
-                    + ajouterEspacesFin(20, listeVols.getString("destination"))
-                    + ajouterEspacesFin(20, listeVols.getString("date_depart"))
-                    + ajouterEspacesFin(10, String.valueOf(listeVols.getInt("avion_id")))
-                    + ajouterEspacesFin(15, String.valueOf(listeVols.getInt("nb_res")));
-            for (String colonne : extraColonnes) {
-                String valeur = String.valueOf(listeVols.getInt(colonne) == 1 ? "Oui" : "Non");
-                resultat += ajouterEspacesFin(20, valeur);
+        ResultSet listeVols = Controller.listerVolsSelonType(type); //le ctrl contact le DAO, on fait try car on doit fermer le resultset (?)
+            while (listeVols.next()) {
+                resultat += ajouterEspacesFin(10, String.valueOf(listeVols.getInt("vol_id")))
+                        + ajouterEspacesFin(20, listeVols.getString("destination"))
+                        + ajouterEspacesFin(20, listeVols.getString("date_depart"))
+                        + ajouterEspacesFin(10, String.valueOf(listeVols.getInt("avion_id")))
+                        + ajouterEspacesFin(15, String.valueOf(listeVols.getInt("nb_res")));
+                for (String colonne : extraColonnes) {
+                    String valeur = String.valueOf(listeVols.getInt(colonne) == 1 ? "Oui" : "Non");
+                    resultat += ajouterEspacesFin(20, valeur);
+                }
+                resultat += "\n";
             }
-            resultat += "\n";
-        }
+
 
         return resultat;
     }
@@ -215,10 +217,9 @@ public class VueVol {
     }
     public static void ajoutVol(String typeDeVol) { //****METHODE PRINCIPAL POUR COMMUNIQUER AVEC LE DAO
 
-        VolDAO dao = VolDAO.getInstance();
-
+        Controller ctr = Controller.getInstance();
         int num = inputInteger("Entrez le numéro du vol", "AJOUTER UN VOL");
-        boolean volExiste = dao.volExists(num);
+        boolean volExiste = ctr.volExists(num);
         if (volExiste) {
             errorMessage("Le vol existe déjà");
             return;
@@ -230,11 +231,11 @@ public class VueVol {
 
             //*************Ajout de l'avion obligatoire pour le vol, du moins le id***************
             int numAvion = inputInteger("Entrez le numéro de l'avion", "AJOUTER UN AVION");
-            boolean avionExiste = dao.avionExists(numAvion);
+            boolean avionExiste = ctr.avionExists(numAvion);
             Avion avion;
             if (avionExiste) {
                 message("L'avion existe déjà", "AJOUTER AVION");
-                avion = dao.getAvion(numAvion);
+                avion = ctr.getAvion(numAvion); //aller chercher l'avion dans la BD via le ctr/dao pour le mettre dans le vol
             } else {
                 boolean ajoutInfoAvion = yesNoInputMessage("Voulez-vous ajouter des informations sur l'avion ?");
                 if (ajoutInfoAvion) {
@@ -245,12 +246,12 @@ public class VueVol {
                 } else {
                     avion = new Avion(numAvion);
                 }
-                message(dao.addAvion(avion), "AJOUTER AVION"); //ajout de l'avion dans la BD
+                message(ctr.addAvion(avion), "AJOUTER AVION"); //ajout de l'avion dans la BD
             }
             int nbReservation = 0; // pour ne pas changer les cstr des types de vol...
             Vol vol = new Vol(num, dest, dateDepart, avion);
 
-            message(dao.addVolDeBase(vol), "AJOUTER VOL");
+            message(ctr.addVolDeBase(vol), "AJOUTER VOL");
 
             //*********************partie pour tables extrasVol ***********************
             String[] optionMessages = xtraSelonLeType(typeDeVol);
@@ -266,16 +267,16 @@ public class VueVol {
 
                 if (typeDeVol.equals("Bas Prix")) {
                     VolBasPrix volBasPrix = new VolBasPrix(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
-                    message(dao.addVolBasPrix(volBasPrix), "AJOUTER VOL");
+                    message(ctr.addVolByType(volBasPrix), "AJOUTER VOL");
                 } else if (typeDeVol.equals("Regulier")) {
                     VolRegulier volRegulier = new VolRegulier(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
-                    message(dao.addVolRegulier(volRegulier), "AJOUTER VOL");
+                    message(ctr.addVolByType(volRegulier), "AJOUTER VOL");
                 } else if (typeDeVol.equals("Charter")) {
                     VolCharter volCharter = new VolCharter(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
-                    message(dao.addVolCharter(volCharter), "AJOUTER VOL");
+                    message(ctr.addVolByType(volCharter), "AJOUTER VOL");
                 } else if (typeDeVol.equals("Prive")) {
                     VolPrive volPrive = new VolPrive(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
-                    message(dao.addVolPrive(volPrive), "AJOUTER VOL");
+                    message(ctr.addVolByType(volPrive), "AJOUTER VOL");
                 } else {
                     errorMessage("Error: Invalid type of flight.");
                 }
@@ -287,27 +288,25 @@ public class VueVol {
     }
 
 
+
     //**************SUPPRIMER*****************************//
     private static void supprimerVol() {
         int numVol = inputInteger("Entrez le numéro du vol à supprimer", "SUPPRIMER UN VOL");
-        VolDAO dao = VolDAO.getInstance();
-        message(dao.supprimerVol(numVol), "SUPPRIMER UN VOL");
+        message(Controller.getInstance().supprimerVol(numVol), "SUPPRIMER UN VOL");
     }
 
     //**************MODIFIER DATE*****************************//
     private static void modifierDateVol() {
         int numVol = inputInteger("Entrez le numéro du vol à modifier", "MODIFIER DATE VOL");
         Date date = inputDate();
-        VolDAO dao = VolDAO.getInstance();
-        message(dao.modifierDateVol(numVol, date), "MODIFIER DATE VOL");
+        message(Controller.getInstance().modifierDateVol(numVol, date), "MODIFIER DATE VOL");
     }
 
     //**************RÉSERVER*****************************//
     private static void ajouterReservation() {
         int numVol = inputInteger("Entrez le numéro du vol à réserver", "RÉSERVER UN VOL");
         int nbPlaces = inputInteger("Entrez le nombre de places à réserver", "RÉSERVER UN VOL");
-        VolDAO dao = VolDAO.getInstance();
-        message(dao.ajouterReservation(numVol, nbPlaces), "RÉSERVER UN VOL");
+        message(Controller.getInstance().ajouterReservation(numVol, nbPlaces), "RÉSERVER UN VOL");
     }
 
 

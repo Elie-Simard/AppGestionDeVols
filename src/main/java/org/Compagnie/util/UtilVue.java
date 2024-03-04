@@ -145,6 +145,7 @@ public class UtilVue { // ici sera les methodes dinput et de display pour ce quo
     public static void errorMessage(String message) {
         JDialog dialog = createBasicDialog(message, "Erreur");
         dialog.setVisible(true);
+        System.out.println(message);
     }
 
     public static Integer inputInteger(String message, String title) {
