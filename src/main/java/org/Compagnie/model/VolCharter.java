@@ -8,27 +8,12 @@ public class VolCharter extends Vol implements extrasVol {
     boolean wifiExtra;
     boolean salonVIPExtra;
 
-    public VolCharter(int numDeVol, String destination, Date dateDepart, Avion avion, int nbReservation,
-            boolean repasCinqEtoilesExtra, boolean choixSiegePremiumExtra, boolean wifiExtra, boolean salonVIPExtra) {
-        super(numDeVol, destination, dateDepart, avion, nbReservation);
+    public VolCharter(int numDeVol, boolean repasCinqEtoilesExtra, boolean choixSiegePremiumExtra, boolean wifiExtra, boolean salonVIPExtra) {
+        super(numDeVol);
         this.repasCinqEtoilesExtra = repasCinqEtoilesExtra;
         this.choixSiegePremiumExtra = choixSiegePremiumExtra;
         this.wifiExtra = wifiExtra;
         this.salonVIPExtra = salonVIPExtra;
-    }
-
-    public String toString() {
-        String repasCinqEtoilesExtra = this.repasCinqEtoilesExtra ? "Oui" : "Non";
-        String choixSiegePremiumExtra = this.choixSiegePremiumExtra ? "Oui" : "Non";
-        String wifiExtra = this.wifiExtra ? "Oui" : "Non";
-        String salonVIPExtra = this.salonVIPExtra ? "Oui" : "Non";
-
-        return (super.toString()
-                + ajouterEspacesFin(15, repasCinqEtoilesExtra)
-                + ajouterEspacesFin(15, choixSiegePremiumExtra)
-                + ajouterEspacesFin(15, wifiExtra)
-                + ajouterEspacesFin(15, salonVIPExtra)
-                + "\n");
     }
 
     public int getRepasCinqEtoilesExtra() {
@@ -45,5 +30,19 @@ public class VolCharter extends Vol implements extrasVol {
 
     public int getSalonVIPExtra() {
         return salonVIPExtra ? 1 : 0;
+    }
+
+    public String toString() {
+        String repasCinqEtoilesExtra = this.repasCinqEtoilesExtra ? "Oui" : "Non";
+        String choixSiegePremiumExtra = this.choixSiegePremiumExtra ? "Oui" : "Non";
+        String wifiExtra = this.wifiExtra ? "Oui" : "Non";
+        String salonVIPExtra = this.salonVIPExtra ? "Oui" : "Non";
+
+        return (super.toString()
+                + ajouterEspacesFin(15, repasCinqEtoilesExtra)
+                + ajouterEspacesFin(15, choixSiegePremiumExtra)
+                + ajouterEspacesFin(15, wifiExtra)
+                + ajouterEspacesFin(15, salonVIPExtra)
+                + "\n");
     }
 }

@@ -17,7 +17,7 @@ public class VueVol {
     // ---Menu pour le choix d'opération sur les vols
     public static int choixPourMenuGeneral() {
         String contenu = "1- Lister \n2- Ajouter \n3- Supprimer\n4-Modifier Date\n5- Réserver\n6- Quitter\n";
-        contenu += "Entrez votre choix parmis[1-6] : ";
+        contenu += "Entrez votre choix :";
         return inputInteger(contenu, "MENU GESTION VOLS");
     }
 
@@ -55,7 +55,7 @@ public class VueVol {
     //**************************************************LISTAGE DES VOLS************************************************//
     public static Integer choixPourMenuDeListage() {
         String contenu = "1-Tous\n2-Bas Prix\n3-Régulier\n4-Charter\n5-Privé\n6-Terminer\n\n";
-        contenu += "Quel type de vol souhaité vous lister ? Entrez votre choix parmis[1-6] : ";
+        contenu += "Quel type de vol souhaité vous lister ? ";
         return inputInteger(contenu, "MENU CHOIX DE VOL À LISTER");
 
     }
@@ -179,17 +179,15 @@ public class VueVol {
                 resultat += "\n";
             }
 
-
         return resultat;
     }
 
     // **********************************************AJOUT DE VOL*****************************************//
     public static Integer choixPourMenuDAjout() {
         String contenu = "1-Bas Prix\n2-Régulier\n3-Charter\n4-Privé\n5-Terminer\n\n";
-        contenu += "De quel type de vol souhaité vous ajouter ? Entrez votre choix parmis[1-5] : ";
+        contenu += "De quel type de vol souhaité vous ajouter ? ";
         return inputInteger(contenu, "MENU CHOIX DE VOL À AJOUTER");
     }
-
     public static void menuAjouter() throws Exception {
         Integer choix;
         do {
@@ -209,6 +207,8 @@ public class VueVol {
                     break;
                 case 5:
                     break;
+                case 6:
+                    break; //car les autres menus utilisent le 6 pour quitter. Pour rendre la navigation plus uniforme
                 default:
                     message("Choix invalide", "Erreur");
                     break;
@@ -219,8 +219,8 @@ public class VueVol {
 
         Controller ctr = Controller.getInstance();
         int num = inputInteger("Entrez le numéro du vol", "AJOUTER UN VOL");
-        boolean volExiste = ctr.volExists(num);
-        if (volExiste) {
+        boolean volExists = ctr.volExists(num);
+        if (volExists) {
             errorMessage("Le vol existe déjà");
             return;
         } else {
@@ -248,7 +248,6 @@ public class VueVol {
                 }
                 message(ctr.addAvion(avion), "AJOUTER AVION"); //ajout de l'avion dans la BD
             }
-            int nbReservation = 0; // pour ne pas changer les cstr des types de vol...
             Vol vol = new Vol(num, dest, dateDepart, avion);
 
             message(ctr.addVolDeBase(vol), "AJOUTER VOL");
@@ -266,16 +265,16 @@ public class VueVol {
                 boolean opt4 = boolMap.get("opt4");
 
                 if (typeDeVol.equals("Bas Prix")) {
-                    VolBasPrix volBasPrix = new VolBasPrix(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
+                    VolBasPrix volBasPrix = new VolBasPrix(num, opt1, opt2, opt3, opt4);
                     message(ctr.addVolByType(volBasPrix), "AJOUTER VOL");
                 } else if (typeDeVol.equals("Regulier")) {
-                    VolRegulier volRegulier = new VolRegulier(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
+                    VolRegulier volRegulier = new VolRegulier(num, opt1, opt2, opt3, opt4);
                     message(ctr.addVolByType(volRegulier), "AJOUTER VOL");
                 } else if (typeDeVol.equals("Charter")) {
-                    VolCharter volCharter = new VolCharter(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
+                    VolCharter volCharter = new VolCharter(num, opt1, opt2, opt3, opt4);
                     message(ctr.addVolByType(volCharter), "AJOUTER VOL");
                 } else if (typeDeVol.equals("Prive")) {
-                    VolPrive volPrive = new VolPrive(num, dest, dateDepart, avion, nbReservation, opt1, opt2, opt3, opt4);
+                    VolPrive volPrive = new VolPrive(num, opt1, opt2, opt3, opt4);
                     message(ctr.addVolByType(volPrive), "AJOUTER VOL");
                 } else {
                     errorMessage("Error: Invalid type of flight.");

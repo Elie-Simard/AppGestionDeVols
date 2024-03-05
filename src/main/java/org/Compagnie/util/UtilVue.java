@@ -33,7 +33,7 @@ public class UtilVue { // ici sera les methodes dinput et de display pour ce quo
         // or?-> return String.format("%-" + tailleColonne + "s", donnee);
     }
 
-    public static JDialog createBasicDialog(String message, String titre) {
+    public static JDialog createBasicDialog(String message, String titre, Boolean addOkButton) {
         JDialog dialog = new JDialog();
         dialog.setModal(true);
         dialog.setTitle(titre);
@@ -55,13 +55,18 @@ public class UtilVue { // ici sera les methodes dinput et de display pour ce quo
         label.setForeground(Color.WHITE); // Assurez-vous que cette couleur fonctionne avec votre image de fond
         label.setFont(new Font("Arial", Font.PLAIN, 28));
         backgroundPanel.add(label, gbc);
-        //ajoutons le ok
-        JPanel okButtonPanel = okButton(dialog);
-        GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.gridx = 0;
-        gbc2.gridy = 1;
-        gbc2.anchor = GridBagConstraints.CENTER;
-        backgroundPanel.add(okButtonPanel, gbc2);
+
+        //ici ou pourrait ajouter le inputPanel pour les champs de texte dans inputMessage
+
+        //ajoutons le ok (pt a enlever pour ajouter seulement dans les methodes qui en ont besoin?)
+        if (addOkButton) {
+            JPanel okButtonPanel = okButton(dialog);
+            GridBagConstraints gbc2 = new GridBagConstraints();
+            gbc2.gridx = 0;
+            gbc2.gridy = 1;
+            gbc2.anchor = GridBagConstraints.CENTER;
+            backgroundPanel.add(okButtonPanel, gbc2);
+        }
 
 
         dialog.add(backgroundPanel);
@@ -95,15 +100,15 @@ public class UtilVue { // ici sera les methodes dinput et de display pour ce quo
             label.setHorizontalAlignment(SwingConstants.LEFT); // alignement du texte
             GridBagConstraints gbcLabel = gridConstraintsForMenu(0, i, GridBagConstraints.NONE, 0, 1.0,
                     GridBagConstraints.CENTER);
-            inputPanel.add(label, gbcLabel);
+            inputPanel.add(label, gbcLabel); //on ajoute la ligne au panel d'input
         }
 
         // Champ de texte pour l'entrée avec une taille préférée pour contrôler la largeur
         JTextField textField = new JTextField();
-        textField.setPreferredSize(new Dimension(200, 24));
+        textField.setPreferredSize(new Dimension(10, 24));
         GridBagConstraints gbcTextField = gridConstraintsForMenu(0, messageLines.length, GridBagConstraints.NONE, 0, 0,
                 GridBagConstraints.CENTER);
-        gbcTextField.ipadx = 200; // contrôle la largeur supplémentaire du champ
+        gbcTextField.ipadx = 60; // contrôle la largeur supplémentaire du champ
         gbcTextField.gridwidth = GridBagConstraints.REMAINDER; // fin de ligne
         inputPanel.add(textField, gbcTextField);
 
@@ -137,13 +142,13 @@ public class UtilVue { // ici sera les methodes dinput et de display pour ce quo
 
 
     public static void message(String message, String titre) {
-        JDialog dialog = createBasicDialog(message, "infos");
+        JDialog dialog = createBasicDialog(message, "infos", true);
 
         dialog.setVisible(true);
     }
 
     public static void errorMessage(String message) {
-        JDialog dialog = createBasicDialog(message, "Erreur");
+        JDialog dialog = createBasicDialog(message, "Erreur", true);
         dialog.setVisible(true);
         System.out.println(message);
     }
@@ -191,7 +196,7 @@ public class UtilVue { // ici sera les methodes dinput et de display pour ce quo
 
 
     public static boolean yesNoInputMessage(String message) {
-        JDialog dialog = createBasicDialog(message, "Confirmation");
+        JDialog dialog = createBasicDialog(message, "Confirmation", false);
 
         // Panel pour les boutons
         JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -219,7 +224,7 @@ public class UtilVue { // ici sera les methodes dinput et de display pour ce quo
     }
 
     public static Map<String, Boolean> optionsRadioInputMessage(String opt1Txt, String opt2Txt, String opt3Txt, String opt4Txt) {
-        JDialog dialog = createBasicDialog("Choisissez les options souhaitées:", "Options");
+        JDialog dialog = createBasicDialog("Choisissez les options souhaitées:", "Options", false);
 
         // Panel pour les options, avec un BoxLayout pour aligner les composants verticalement
         JPanel optionsPanel = new JPanel();

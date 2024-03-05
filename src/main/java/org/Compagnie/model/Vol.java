@@ -15,17 +15,6 @@ public class Vol implements Serializable {
     private Avion avion;
     private int nbReservation;
 
-    public Vol(int numDeVol, String destination, Date dateDepart, Avion avion, int nbReservation) {
-        this.numDeVol = numDeVol;
-        this.destination = destination;
-        setDateDepart(dateDepart);
-        this.avion = avion;
-        this.nbReservation = nbReservation;
-    } // constructeur utilisé dans compagnie, ancien constructeur
-
-
-
-
     public Vol(int numDeVol, String destination, Date dateDepart, Avion avion) {
         this.numDeVol = numDeVol;
         this.destination = destination;
@@ -34,11 +23,9 @@ public class Vol implements Serializable {
         this.nbReservation = 0;
     }
 
-
-    public void setNbReservation(int nbReservation) {
-        this.nbReservation = nbReservation;
+    public Vol(int numDeVol) { //pour passer aux classes filles
+        this.numDeVol = numDeVol;
     }
-
     public void setDateDepart(Date dateDepart) {
         boolean isValidDate = Date
                 .validerDate(dateDepart.getJour(), dateDepart.getMois(), dateDepart.getAn(), new boolean[3]).isEmpty();
@@ -79,14 +66,6 @@ public class Vol implements Serializable {
                                     // de vol, pour ainsi pouvoir les trier par ordre croissant de numéro de vol a
                                     // l'interieur d'une liste(arraylist, linkedList
         return this.numDeVol - vol.numDeVol;
-    }
-
-    public void setDestination(String dest) {
-        this.destination = dest;
-    }
-
-    public void setAvion(Avion avion) {
-        this.avion = avion;
     }
 
     public String toString() {

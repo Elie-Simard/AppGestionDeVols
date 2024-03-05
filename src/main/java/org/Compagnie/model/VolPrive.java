@@ -1,7 +1,5 @@
 package org.Compagnie.model;
 
-import org.Compagnie.util.*;
-
 import static org.Compagnie.util.UtilVue.ajouterEspacesFin;
 
 public class VolPrive extends Vol implements extrasVol {
@@ -10,32 +8,14 @@ public class VolPrive extends Vol implements extrasVol {
     boolean wifi;
     boolean salonVIP;
 
-    public VolPrive(int numDeVol, String destination, Date dateDepart, Avion avion, int nbReservation,
-            boolean repasCinqEtoiles,
+    public VolPrive(int numDeVol, boolean repasCinqEtoiles,
             boolean choixSiegePremium, boolean wifi, boolean salonVIP) {
-        super(numDeVol, destination, dateDepart, avion, nbReservation);
+        super(numDeVol);
         this.repasCinqEtoiles = repasCinqEtoiles;
         this.choixSiegePremium = choixSiegePremium;
         this.wifi = wifi;
         this.salonVIP = salonVIP;
     }
-
-    public void setRepasLuxeInclus(boolean repasLuxeInclus) {
-        this.repasCinqEtoiles = repasLuxeInclus;
-    }
-
-    public void setChoixSiegePremiumInclus(boolean choixSiegePremiumInclus) {
-        this.choixSiegePremium = choixSiegePremiumInclus;
-    }
-
-    public void setWifiInclus(boolean wifiInclus) {
-        this.wifi = wifiInclus;
-    }
-
-    public void setSalonVIPInclus(boolean salonVIPInclus) {
-        this.salonVIP = salonVIPInclus;
-    }
-
 
     public int getRepasCinqEtoiles() {
         return repasCinqEtoiles ? 1 : 0;

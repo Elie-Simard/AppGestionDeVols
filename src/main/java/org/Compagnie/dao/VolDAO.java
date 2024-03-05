@@ -3,7 +3,6 @@ package org.Compagnie.dao;
 import org.Compagnie.connexion.ConnexionBD;
 import org.Compagnie.model.*;
 import org.Compagnie.model.Date;
-
 import java.sql.*;
 
 import static org.Compagnie.util.UtilVue.*;
@@ -31,32 +30,6 @@ public class VolDAO {
     // ************************ FIN PARTIE SINGLETON ********************
 
     //************************* LISTER **********************************
-    public ResultSet listerVols() {
-        try {
-            connexion = ConnexionBD.getInstance().getConnexionMySQL();
-            if (connexion != null) {
-                statement = connexion.createStatement();
-                resultSet = statement.executeQuery("SELECT * FROM vol");
-            }
-        } catch (SQLException e) {
-            resultSet = null;
-        }
-        return resultSet;
-    }
-
-    public ResultSet listerAvions() {
-        try {
-            connexion = ConnexionBD.getInstance().getConnexionMySQL();
-            if (connexion != null) {
-                statement = connexion.createStatement();
-                resultSet = statement.executeQuery("SELECT * FROM avion");
-            }
-        } catch (SQLException e) {
-            resultSet = null;
-        }
-        return resultSet;
-    }
-
     public ResultSet listerVolsSelonType(String type) {
         //retourner dabord les colonnes de vol puis les colonnes du type
         try {
@@ -186,6 +159,13 @@ public class VolDAO {
     }
 
     //****************** SUPPRESSIONS ******************
+      /* la contrainte de suppression en cascade est déjà implémentée dans la BD
+            La suppression d'un vol entraine la suppression de des différents
+            types de vols associés, qui sont stockés dans des tables différentes
+
+            Par contre, étant donné qu'un avion peut être utilisé pour d'autres vols,
+            la suppression d'un vol n'entraine pas la suppression de l'avion associé.
+      */
     public String supprimerVol(int numVol) {
         String msg;
         try {

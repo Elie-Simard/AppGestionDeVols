@@ -19,7 +19,7 @@ public class Avion implements Serializable {
     public Avion(int numAvion) {
         this.numAvion = numAvion;
         this.typeAvion = "Inconnu";
-        this.nbPlaces = 0;
+        this.nbPlaces = 100;
         this.setCategorieAvion(3); // soit Inconnu
     }
 
